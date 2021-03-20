@@ -2,7 +2,6 @@ package goutil
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -202,8 +201,6 @@ func NewTimeParse(str string) (*newTime, error) {
 	if strings.Index(str, "T") == 10 {
 		layout = time.RFC3339
 	}
-
-	fmt.Println(layout)
 
 	// 在对应时区转化为 time.time 类型
 	parse, err := time.ParseInLocation(layout, str, time.Local)

@@ -1,4 +1,4 @@
-package goutil
+package httpclient
 
 import (
 	"bytes"
@@ -15,32 +15,34 @@ import (
 
 // 相关头部信息
 const (
-	UserAgent = "User-Agent"
+	UserAgent      = "User-Agent"
 	UserAgentValue = "Goutil/1.0.0 Laixhe/1.0.0"
 )
+
 // 相关头部信息
 const (
-	ContentType = "Content-Type"
+	ContentType               = "Content-Type"
 	ApplicationFormUrlencoded = "application/x-www-form-urlencoded"
-	ApplicationJson = "application/json"
+	ApplicationJson           = "application/json"
 )
+
 // 相关头部信息
 const (
-	Authorization = "Authorization"
-	AuthorizationValue = "Basic "
+	Authorization         = "Authorization"
+	AuthorizationValue    = "Basic "
 	AuthorizationValueLen = 6
 )
 
 // httpClient HTTP客户端
 type httpClient struct {
-	method string
-	httpURL *url.URL
-	header map[string]string
-	body io.Reader
-	Error error
-	RespBody []byte
+	method     string
+	httpURL    *url.URL
+	header     map[string]string
+	body       io.Reader
+	Error      error
+	RespBody   []byte
 	RespHeader map[string]string
-	RespCode int
+	RespCode   int
 }
 
 // reflectStruct 解析结构体
@@ -77,7 +79,7 @@ func (hc *httpClient) reflectStruct(v *reflect.Value) map[string]string {
 			}
 			data[name] = value
 		case reflect.Int64, reflect.Int32, reflect.Int, reflect.Int8,
-		reflect.Uint64, reflect.Uint32, reflect.Uint, reflect.Uint8:
+			reflect.Uint64, reflect.Uint32, reflect.Uint, reflect.Uint8:
 			value := fmt.Sprintf("%d", val)
 			if len(tags) >= 2 {
 				if tags[1] == "omitempty" {
@@ -114,7 +116,7 @@ func (hc *httpClient) reflectStruct(v *reflect.Value) map[string]string {
 }
 
 // reflectHeader 解析请求头信息
-func (hc *httpClient) reflectHeader(header interface{}){
+func (hc *httpClient) reflectHeader(header interface{}) {
 	// 进行类型断言
 	if header != nil {
 		switch header.(type) {
@@ -135,7 +137,6 @@ func (hc *httpClient) reflectHeader(header interface{}){
 		}
 	}
 }
-
 
 // httpCall 发起 http 请求
 func (hc *httpClient) httpCall() {
@@ -224,8 +225,8 @@ func (hc *httpClient) Log(f func(data []byte, header map[string]string, err erro
 // query 请求体，只接受 string、[]byte、map[string]string、struct(只接受基本类型)
 func HttpGet(httpURL string, header interface{}, query interface{}) *httpClient {
 	hc := &httpClient{
-		method:     http.MethodGet,
-		header:     make(map[string]string),
+		method: http.MethodGet,
+		header: make(map[string]string),
 	}
 	// 生成要访问的 url
 	urlParse, err := url.Parse(httpURL)
@@ -317,8 +318,8 @@ func HttpGet(httpURL string, header interface{}, query interface{}) *httpClient 
 // query 请求体，只接受 string、[]byte、map[string]string、struct(只接受基本类型)
 func HttpPost(httpURL string, header interface{}, body interface{}) *httpClient {
 	hc := &httpClient{
-		method:     http.MethodPost,
-		header:     make(map[string]string),
+		method: http.MethodPost,
+		header: make(map[string]string),
 	}
 	// 生成要访问的 url
 	urlParse, err := url.Parse(httpURL)

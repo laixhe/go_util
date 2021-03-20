@@ -10,52 +10,61 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	once sync.Once
+// 日志等级
+const (
+	DebugLevel = "debug"
+	InfoLevel  = "info"
+	WarnLevel  = "warn"
+	ErrorLevel = "error"
+)
 
+// 堆栈帧数
+const callerSkip = 1
+
+var (
+	once          sync.Once
 	zapLogger     *zap.Logger
 	sugaredLogger *zap.SugaredLogger
 )
 
-// InitSizeFile 初始 zap 日志，按大小切割和备份个数、文件有效期
-// serviceName 服务名
-// path        日志文件路径
-// logLevel    日志级别 debug  info  error
-// maxSize     每个日志文件保存大小 100M
-// maxBackup   保留 N 个备份
-// maxAge      保留 N 天
-// callerSkip 提升的堆栈帧数，0=当前函数，1=上一层函数，....
-func InitSizeFile(serviceName, path, logLevel string, maxSize, maxBackup, maxAge, callerSkip int) {
+// Config 配置
+type Config struct {
+	ServiceName string // 服务名
+	LogPath     string // 日志文件路径
+	LogLevel    string // 日志级别：debug  info warn error
+	CallerSkip  int    // 提升的堆栈帧数,默认 0，0=当前函数，1=上一层函数，....
+	Filename    string // 日志文件路径，默认 os.TempDir()
+	MaxSize     int    // 每个日志文件保存大小
+	MaxBackups  int    // 保留N个备份，默认不限
+	MaxAge      int    // 保留N天，默认不限
+	Compress    bool   // 是否压缩，默认不压缩
+}
 
+// InitSizeFile 初始 zap 日志，按大小切割和备份个数、文件有效期
+func InitSizeFile(c Config) {
 	once.Do(func() {
 		// 日志分割
 		hook := lumberjack.Logger{
-			Filename:   path,      // 日志文件路径，默认 os.TempDir()
-			MaxSize:    maxSize,   // 每个日志文件保存大小
-			MaxBackups: maxBackup, // 保留N个备份，默认不限
-			MaxAge:     maxAge,    // 保留N天，默认不限
-			Compress:   true,      // 是否压缩，默认不压缩
+			Filename:   c.LogPath,
+			MaxSize:    c.MaxSize,
+			MaxBackups: c.MaxBackups,
+			MaxAge:     c.MaxAge,
+			Compress:   c.Compress,
 		}
-
 		// 打印到文件
 		write := zapcore.AddSync(&hook)
-
 		// 初始 zap 日志
-		zapInit(write, serviceName, logLevel, callerSkip)
+		zapInit(write, c.ServiceName, c.LogLevel, c.CallerSkip+callerSkip)
 	})
 }
 
 // InitConsole 初始 zap 日志，输出到终端
-// serviceName 服务名
-// logLevel    日志级别 debug  info  error
-// callerSkip 提升的堆栈帧数，0-当前函数，1-上一层函数，....
-func InitConsole(serviceName, logLevel string, callerSkip int) {
+func InitConsole(c Config) {
 	once.Do(func() {
 		// 打印到控制台
 		write := zapcore.AddSync(os.Stdout)
-
 		// 初始 zap 日志
-		zapInit(write, serviceName, logLevel, callerSkip)
+		zapInit(write, c.ServiceName, c.LogLevel, c.CallerSkip+callerSkip)
 	})
 }
 
@@ -65,15 +74,16 @@ func InitConsole(serviceName, logLevel string, callerSkip int) {
 // logLevel    日志级别 debug  info  error
 // callerSkip 提升的堆栈帧数，0=当前函数，1=上一层函数，....
 func zapInit(write zapcore.WriteSyncer, serviceName, logLevel string, callerSkip int) {
-
 	// 设置日志级别
 	var level zapcore.Level
 	switch logLevel {
-	case "debug":
+	case DebugLevel:
 		level = zap.DebugLevel
-	case "info":
+	case InfoLevel:
 		level = zap.InfoLevel
-	case "error":
+	case WarnLevel:
+		level = zap.WarnLevel
+	case ErrorLevel:
 		level = zap.ErrorLevel
 	default:
 		level = zap.DebugLevel
@@ -109,7 +119,6 @@ func zapInit(write zapcore.WriteSyncer, serviceName, logLevel string, callerSkip
 	development := zap.Development()
 	// 添加字段-服务器名称
 	filed := zap.Fields(zap.String("serviceName", serviceName))
-
 	// 构造日志
 	zapLogger = zap.New(core, caller, addCallerSkip, development, filed)
 	sugaredLogger = zapLogger.Sugar()
@@ -123,7 +132,7 @@ func zapTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 // IsInitNil 是否没有初始化
 func IsInitNil() {
 	if zapLogger == nil {
-		InitConsole("goutil", "debug", 1)
+		InitConsole(Config{ServiceName: "goutil", LogLevel: DebugLevel, CallerSkip: callerSkip})
 	}
 }
 

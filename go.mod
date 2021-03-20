@@ -10,7 +10,6 @@ require (
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sony/sonyflake v1.0.0
 	go.uber.org/zap v1.16.0
-	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

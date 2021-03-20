@@ -13,7 +13,6 @@ func GinLogger() gin.HandlerFunc {
 	IsInitNil()
 	return func(c *gin.Context) {
 		c.Next()
-
 		zapLogger.Info("gin",
 			zap.Int("status", c.Writer.Status()),
 			zap.String("method", c.Request.Method),
@@ -22,7 +21,6 @@ func GinLogger() gin.HandlerFunc {
 			zap.String("ip", c.ClientIP()),
 			zap.String("agent", c.Request.UserAgent()),
 		)
-
 	}
 }
 
@@ -32,7 +30,6 @@ func GinRecovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-
 				zapLogger.Error("gin",
 					zap.Int("status", c.Writer.Status()),
 					zap.String("method", c.Request.Method),
@@ -43,7 +40,6 @@ func GinRecovery() gin.HandlerFunc {
 					zap.Any("error", err),
 					zap.String("stack", string(debug.Stack())),
 				)
-
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 		}()

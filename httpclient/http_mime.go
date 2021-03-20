@@ -1,4 +1,4 @@
-package goutil
+package httpclient
 
 import (
 	"mime"
