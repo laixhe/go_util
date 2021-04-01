@@ -19,6 +19,9 @@ const (
 	DateShortFormat     = "2006-1-2"
 	ShortDateTimeFormat = "20060102150405"
 	ShortDateFormat     = "20060102"
+	DateTimeFormatB     = "2006/01/02 15:04:05"
+	DateFormatB         = "2006/01/02"
+	DateShortFormatB    = "2006/1/2"
 )
 
 var invalidTimeFormat = errors.New("无效的时间格式！")
@@ -170,6 +173,9 @@ func NewTimeUnix(ts int64) *newTime {
 // 有效的日期格式：2006-01-02 15:04:05
 //              2006-01-02
 //              2006-1-2
+//              2006/01/02 15:04:05
+//              2006/01/02
+//              2006/1/2
 //              20060102150405
 //              20060102
 //              2006-01-02T15:04:05+08:00
@@ -177,31 +183,41 @@ func NewTimeParse(str string) (*newTime, error) {
 	if "" == str {
 		return nil, invalidTimeFormat
 	}
-
 	layout := DateTimeFormat
-	if len(str) == 8 {
+	strLen := len(str)
+	switch strLen {
+	case 8:
 		if MatchNumber(str) {
 			layout = ShortDateFormat
+		} else if strings.Count(str, "-") == 2 {
+			layout = DateShortFormat
+		} else if strings.Count(str, "/") == 2 {
+			layout = DateShortFormatB
 		}
-	}
-	if len(str) == 8 && strings.Count(str, "-") == 2 {
-		layout = DateShortFormat
-	}
-	if len(str) == 9 && strings.Count(str, "-") == 2 {
-		layout = DateShortFormat
-	}
-	if len(str) == 10 && strings.Count(str, "-") == 2 {
-		layout = DateFormat
-	}
-	if len(str) == 14 {
+	case 9:
+		if strings.Count(str, "-") == 2 {
+			layout = DateShortFormat
+		} else if strings.Count(str, "/") == 2 {
+			layout = DateShortFormatB
+		}
+	case 10:
+		if strings.Count(str, "-") == 2 {
+			layout = DateFormat
+		} else if strings.Count(str, "/") == 2 {
+			layout = DateFormatB
+		}
+	case 14:
 		if MatchNumber(str) {
 			layout = ShortDateTimeFormat
+		}
+	case 19:
+		if strings.Count(str, "/") == 2 {
+			layout = DateTimeFormatB
 		}
 	}
 	if strings.Index(str, "T") == 10 {
 		layout = time.RFC3339
 	}
-
 	// 在对应时区转化为 time.time 类型
 	parse, err := time.ParseInLocation(layout, str, time.Local)
 	if err != nil {
