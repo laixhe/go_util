@@ -9,8 +9,8 @@ import (
 
 var conf *ini.File
 
-// OpenConfig 加载配置文件
-func OpenConfig(c string) error {
+// Open 加载配置文件
+func Open(c string) error {
 	var err error
 	conf, err = ini.Load(c)
 	if err != nil {
@@ -19,8 +19,8 @@ func OpenConfig(c string) error {
 	return err
 }
 
-// ConfigString 获取单个配置 String
-func ConfigString(str string) string {
+// String 获取单个配置
+func String(str string) string {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).String()
@@ -28,8 +28,8 @@ func ConfigString(str string) string {
 	return conf.Section("").Key(strArr[0]).String()
 }
 
-// ConfigMustString 获取单个配置 String，并有默认值
-func ConfigMustString(str, value string) string {
+// MustString 获取单个配置 String 并有默认值
+func MustString(str, value string) string {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).MustString(value)
@@ -37,8 +37,8 @@ func ConfigMustString(str, value string) string {
 	return conf.Section("").Key(strArr[0]).MustString(value)
 }
 
-// ConfigInt 获取单个配置 Int
-func ConfigInt(str string) (int, error) {
+// Int 获取单个配置
+func Int(str string) (int, error) {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).Int()
@@ -46,8 +46,8 @@ func ConfigInt(str string) (int, error) {
 	return conf.Section("").Key(strArr[0]).Int()
 }
 
-// ConfigMustInt 获取单个配置 Int，并有默认值
-func ConfigMustInt(str string, value int) int {
+// MustInt 获取单个配置 Int 并有默认值
+func MustInt(str string, value int) int {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).MustInt(value)
@@ -56,8 +56,8 @@ func ConfigMustInt(str string, value int) int {
 
 }
 
-// ConfigFloat64 获取单个配置 Float64
-func ConfigFloat64(str string) (float64, error) {
+// Float64 获取单个配置
+func Float64(str string) (float64, error) {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).Float64()
@@ -65,8 +65,8 @@ func ConfigFloat64(str string) (float64, error) {
 	return conf.Section("").Key(strArr[0]).Float64()
 }
 
-// ConfigMustFloat64 获取单个配置 Float64，并有默认值
-func ConfigMustFloat64(str string, value float64) float64 {
+// MustFloat64 获取单个配置 Float64 并有默认值
+func MustFloat64(str string, value float64) float64 {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).MustFloat64(value)
@@ -74,8 +74,8 @@ func ConfigMustFloat64(str string, value float64) float64 {
 	return conf.Section("").Key(strArr[0]).MustFloat64(value)
 }
 
-// ConfigBool 获取单个配置 Bool
-func ConfigBool(str string) (bool, error) {
+// Bool 获取单个配置
+func Bool(str string) (bool, error) {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).Bool()
@@ -83,8 +83,8 @@ func ConfigBool(str string) (bool, error) {
 	return conf.Section("").Key(strArr[0]).Bool()
 }
 
-// ConfigMustBool 获取单个配置 Bool，并有默认值
-func ConfigMustBool(str string, value bool) bool {
+// MustBool 获取单个配置 Bool 并有默认值
+func MustBool(str string, value bool) bool {
 	strArr := strings.Split(str, ".")
 	if len(strArr) == 2 {
 		return conf.Section(strArr[0]).Key(strArr[1]).MustBool(value)

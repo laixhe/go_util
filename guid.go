@@ -4,12 +4,14 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
-	"github.com/sony/sonyflake"
 	"math/big"
 	"os"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/laixhe/goutil/date"
+	"github.com/sony/sonyflake"
 )
 
 // 以原子方式递增-计数器
@@ -54,8 +56,8 @@ func GetGUID() string {
 
 // 类以雪花算法的常量
 const (
-	saltBit = uint(8)                  // 随机因子二进制位数
-	saltShift = uint(8)                // 随机因子移位数
+	saltBit       = uint(8)             // 随机因子二进制位数
+	saltShift     = uint(8)             // 随机因子移位数
 	increaseShift = saltBit + saltShift // 自增数移位数
 )
 
@@ -83,7 +85,8 @@ func (c *XUID) Generate() int64 {
 }
 
 // xuid 类以雪花算法
-var xuid = XUID{increase: timeUnix}
+var xuid = XUID{increase: date.TimeUnix}
+
 // GetXUID 类以雪花算法生成分布式唯一ID
 func GetXUID() int64 {
 	return xuid.Generate()
@@ -91,8 +94,9 @@ func GetXUID() int64 {
 
 // snowFlake 雪花算法
 var snowFlake = sonyflake.NewSonyflake(sonyflake.Settings{})
+
 // GetSnowFlakeID 雪花算法生成分布式唯一ID
 func GetSnowFlakeID() uint64 {
-	id,_ := snowFlake.NextID()
+	id, _ := snowFlake.NextID()
 	return id
 }

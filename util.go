@@ -20,14 +20,14 @@ func GetLineInfo(skip int) (fileName string, funcName string, lineNo int) {
 // PageNumber 计算分页数
 // page    第几页
 // perPage 每页的记录数
-// return page perPage
-func PageNumber(page, perPage int) (int, int) {
+func PageNumber(page, perPage int) (limit int, offset int) {
 	if page <= 0 {
 		page = 1
 	}
 	if perPage <= 0 {
 		perPage = 12
 	}
-	page = (page - 1) * perPage
-	return page, perPage
+	offset = (page - 1) * perPage
+	limit = perPage
+	return
 }

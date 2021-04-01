@@ -1,10 +1,12 @@
-package goutil
+package date
 
 import (
 	"errors"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/laixhe/goutil/match"
 )
 
 // (这是个奇葩,必须是这个时间点, 据说是go诞生之日, 记忆方法:6-1-2-3-4-5)
@@ -27,7 +29,7 @@ const (
 var invalidTimeFormat = errors.New("无效的时间格式！")
 
 // 时间戳
-var timeUnix = time.Now().Unix()
+var TimeUnix = time.Now().Unix()
 
 // SameDayTime 一天的时间秒数
 const SameDayTime int64 = 86400
@@ -187,7 +189,7 @@ func NewTimeParse(str string) (*newTime, error) {
 	strLen := len(str)
 	switch strLen {
 	case 8:
-		if MatchNumber(str) {
+		if match.IsNumber(str) {
 			layout = ShortDateFormat
 		} else if strings.Count(str, "-") == 2 {
 			layout = DateShortFormat
@@ -207,7 +209,7 @@ func NewTimeParse(str string) (*newTime, error) {
 			layout = DateFormatB
 		}
 	case 14:
-		if MatchNumber(str) {
+		if match.IsNumber(str) {
 			layout = ShortDateTimeFormat
 		}
 	case 19:
