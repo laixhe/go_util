@@ -1,4 +1,4 @@
-package goutil
+package keyword
 
 // SensitiveInvalidWords 无效词汇
 var SensitiveInvalidWords = []string{

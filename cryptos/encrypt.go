@@ -1,4 +1,4 @@
-package goutil
+package cryptos
 
 import (
 	"crypto/hmac"

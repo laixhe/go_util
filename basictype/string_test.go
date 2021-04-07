@@ -1,20 +1,18 @@
-package goutil
+package basictype
 
 import (
 	"fmt"
 	"testing"
 )
 
-func TestIntArrayToString(t *testing.T) {
-	fmt.Println(IntArrayToString([]int{1, 2, 3, 5}, ","))
+func TestSubstr(t *testing.T) {
+	str := Substr("123456789", 0, 6)
+	fmt.Println(str)
 }
 
-func TestInt32ArrayToString(t *testing.T) {
-	fmt.Println(Int32ArrayToString([]int32{1, 2, 3, 5, 4}, ""))
-}
-
-func TestInt64ArrayToString(t *testing.T) {
-	fmt.Println(Int64ArrayToString([]int64{1, 2, 3, 5, 4, 6}, "|"))
+func TestGetRandomString(t *testing.T) {
+	str := GetRandomString(20, 1)
+	fmt.Println(str, len(str))
 }
 
 func TestStringToIntArray(t *testing.T) {

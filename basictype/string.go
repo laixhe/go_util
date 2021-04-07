@@ -1,217 +1,164 @@
-package goutil
+package basictype
 
 import (
 	"errors"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
-// Int8ArrayToString 拼接 int8 为 string
-func Int8ArrayToString(data []int8, sep string) string {
+var RandomString = []byte("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+var RandomStringToLower = []byte("0123456789abcdefghijklmnopqrstuvwxyz")
+var RandomStringInt = []byte("0123456789")
 
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// Substr 字符串截取
+func Substr(str string, start, length int) string {
+	rs := []rune(str)
+	rl := len(rs)
+	end := 0
+
+	if start < 0 {
+		start = rl - 1 + start
 	}
-	dataLen--
+	end = start + length
 
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-		}
+	if start > end {
+		start, end = end, start
 	}
 
-	return str.String()
+	if start < 0 {
+		start = 0
+	}
+	if start > rl {
+		start = rl
+	}
+	if end < 0 {
+		end = 0
+	}
+	if end > rl {
+		end = rl
+	}
+
+	return string(rs[start:end])
 }
 
-// Uint8ArrayToString 拼接 uint8 为 string
-func Uint8ArrayToString(data []uint8, sep string) string {
+// GetRandomString 生成随机字符串
+// l int 随机的长度
+// is int 0=不包含大写 1=包含大写 2=只有数字 (默认为 0)
+func GetRandomString(l int, is ...int) string {
 
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
-	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
+	bytes := RandomStringToLower
+	if len(is) > 0 {
+		if is[0] == 1 {
+			bytes = RandomString
+		}
+		if is[0] == 2 {
+			bytes = RandomStringInt
 		}
 	}
 
-	return str.String()
+	bytesLen := len(bytes)
+	result := make([]byte, 0, l)
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < l; i++ {
+		result = append(result, bytes[r.Intn(bytesLen)])
+	}
+	return string(result)
 }
 
-// IntArrayToString 拼接 int 为 string
-func IntArrayToString(data []int, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToInt 字符串转整型
+func StringToInt(s string) int {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.Itoa(v))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.Itoa(v))
-		}
+	id, err := strconv.ParseInt(s, 10, 0)
+	if err != nil {
+		return 0
 	}
-
-	return str.String()
+	return int(id)
 }
 
-// UintArrayToString 拼接 uint 为 string
-func UintArrayToString(data []uint, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToUint 字符串转整型
+func StringToUint(s string) uint {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-		}
+	id, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return 0
 	}
-
-	return str.String()
+	return uint(id)
 }
 
-// Int32ArrayToString 拼接 int32 为 string
-func Int32ArrayToString(data []int32, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToInt32 字符串转整型
+func StringToInt32(s string) int32 {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-		}
+	id, err := strconv.ParseInt(s, 10, 0)
+	if err != nil {
+		return 0
 	}
-
-	return str.String()
+	return int32(id)
 }
 
-// Uint32ArrayToString 拼接 uint32 为 string
-func Uint32ArrayToString(data []uint32, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToUint32 字符串转整型
+func StringToUint32(s string) uint32 {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(int64(v), 10))
-		}
+	id, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return 0
 	}
-
-	return str.String()
+	return uint32(id)
 }
 
-// Int64ArrayToString 拼接 int64 为 string
-func Int64ArrayToString(data []int64, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToInt64 字符串转整型
+func StringToInt64(s string) int64 {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatInt(v, 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatInt(v, 10))
-		}
+	id, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return 0
 	}
-
-	return str.String()
+	return id
 }
 
-// Uint64ArrayToString 拼接 uint64 为 string
-func Uint64ArrayToString(data []uint64, sep string) string {
-
-	dataLen := len(data)
-	if dataLen == 0 {
-		return ""
+// StringToUint64 字符串转整型
+func StringToUint64(s string) uint64 {
+	if s == "" {
+		return 0
 	}
-	dataLen--
-
-	var sepLen = len(sep)
-	var str = strings.Builder{}
-
-	for k, v := range data {
-		if k != dataLen {
-			str.WriteString(strconv.FormatUint(v, 10))
-			if sepLen > 0 {
-				str.WriteString(sep)
-			}
-		} else {
-			str.WriteString(strconv.FormatUint(v, 10))
-		}
+	id, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return 0
 	}
+	return id
+}
 
-	return str.String()
+// StringToFloat 字符串转浮点型
+func StringToFloat(s string) float64 {
+	if s == "" {
+		return 0
+	}
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0
+	}
+	return f
+}
+
+// StringToBool 字符串转浮布尔
+func StringToBool(s string) bool {
+	if s == "" {
+		return false
+	}
+	b, _ := strconv.ParseBool(s)
+	return b
 }
 
 // StringToInt8Array 分割字符串为 int8 数组

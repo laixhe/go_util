@@ -1,4 +1,4 @@
-package goutil
+package array
 
 // FilterRepeatString 过滤重复数据 string (一维数组)
 func FilterRepeatString(s []string) []string {
