@@ -1,4 +1,4 @@
-package httpc
+package hclient
 
 import (
 	"bytes"
