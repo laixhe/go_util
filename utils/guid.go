@@ -19,12 +19,10 @@ var guidCounter uint32 = 0
 
 // GetGUID 获取 GUID
 func GetGUID() string {
-
 	var b [12]byte
 	var i uint32
 
 	binary.BigEndian.PutUint32(b[:], uint32(time.Now().Unix()))
-
 	// 获取系统主机名
 	host, err := os.Hostname()
 	if err != nil || len(host) < 3 {
@@ -38,12 +36,10 @@ func GetGUID() string {
 		b[5] = host[1]
 		b[6] = host[2]
 	}
-
 	// 获取进程PID
 	pid := os.Getpid()
 	b[7] = byte(pid >> 8)
 	b[8] = byte(pid)
-
 	// 以原子方式递增-计数器
 	i = atomic.AddUint32(&guidCounter, 1)
 	b[9] = byte(i >> 16)
@@ -51,7 +47,6 @@ func GetGUID() string {
 	b[11] = byte(i)
 
 	return hex.EncodeToString(b[:])
-
 }
 
 // 类以雪花算法的常量
@@ -74,9 +69,15 @@ func (c *XUID) Generate() int64 {
 	c.Lock()
 	c.increase++
 	// 获取随机因子数值
-	randA, _ := rand.Int(rand.Reader, big.NewInt(255))
+	randA, err := rand.Int(rand.Reader, big.NewInt(255))
+	if err != nil {
+		return int64(GetSnowFlakeID())
+	}
 	c.saltA = randA.Int64()
-	randB, _ := rand.Int(rand.Reader, big.NewInt(255))
+	randB, err := rand.Int(rand.Reader, big.NewInt(255))
+	if err != nil {
+		return int64(GetSnowFlakeID())
+	}
 	c.saltB = randB.Int64()
 	// 通过位运算实现自动占位
 	id := int64((c.increase << increaseShift) | (c.saltA << saltShift) | c.saltB)
@@ -97,6 +98,9 @@ var snowFlake = sonyflake.NewSonyflake(sonyflake.Settings{})
 
 // GetSnowFlakeID 雪花算法生成分布式唯一ID
 func GetSnowFlakeID() uint64 {
-	id, _ := snowFlake.NextID()
+	id, err := snowFlake.NextID()
+	if err != nil {
+		return uint64(GetXUID())
+	}
 	return id
 }
